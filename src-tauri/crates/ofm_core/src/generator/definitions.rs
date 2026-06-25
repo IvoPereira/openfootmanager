@@ -59,6 +59,12 @@ pub struct TeamDef {
     pub reputation_range: Option<[u32; 2]>,
     #[serde(default, alias = "finance_range")]
     pub finance_range: Option<[i64; 2]>,
+    #[serde(default, alias = "stadium_capacity")]
+    pub stadium_capacity: Option<u32>,
+    #[serde(default, alias = "kit_pattern")]
+    pub kit_pattern: Option<domain::team::KitPattern>,
+    #[serde(default)]
+    pub media: TeamMediaDef,
 }
 
 fn default_play_style() -> String {
@@ -69,6 +75,12 @@ fn default_play_style() -> String {
 pub struct TeamColorsDef {
     pub primary: String,
     pub secondary: String,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TeamMediaDef {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub logo: Option<String>,
 }
 
 /// Try to load a names definition from a JSON or YAML file, returning None on
@@ -133,6 +145,9 @@ pub(super) fn default_teams_definition() -> TeamsDefinition {
                 stadium_name: format!("{} Arena", t.city),
                 reputation_range: Some([300, 900]),
                 finance_range: Some([500_000, 10_000_000]),
+                stadium_capacity: None,
+                kit_pattern: None,
+                media: TeamMediaDef::default(),
             })
             .collect(),
     }

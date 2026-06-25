@@ -1,3 +1,5 @@
+import { convertFileSrc } from "@tauri-apps/api/core";
+
 const URI_SCHEME = /^[a-z][a-z0-9+.-]*:/i;
 
 export function resolveLocalMediaPath(path: string | null | undefined): string | null {
@@ -6,5 +8,11 @@ export function resolveLocalMediaPath(path: string | null | undefined): string |
   if (!trimmed || URI_SCHEME.test(trimmed) || trimmed.startsWith("//")) {
     return null;
   }
-  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  if (trimmed.startsWith("/assets/")) {
+    return trimmed;
+  }
+  if (trimmed.startsWith("/")) {
+    return convertFileSrc(trimmed);
+  }
+  return `/${trimmed}`;
 }

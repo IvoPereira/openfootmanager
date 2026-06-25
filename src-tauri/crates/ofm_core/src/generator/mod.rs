@@ -527,7 +527,8 @@ fn build_team(tdef: &TeamDef, rng: &mut impl rand::Rng) -> domain::team::Team {
         tdef.country.clone(),
         tdef.city.clone(),
         stadium,
-        rng.random_range(10000..80000),
+        tdef.stadium_capacity
+            .unwrap_or_else(|| rng.random_range(10000..80000)),
     );
     team.finance = rng.random_range(fin_range[0]..fin_range[1]);
     team.reputation = rng.random_range(rep_range[0]..rep_range[1]);
@@ -538,6 +539,10 @@ fn build_team(tdef: &TeamDef, rng: &mut impl rand::Rng) -> domain::team::Team {
         primary: tdef.colors.primary.clone(),
         secondary: tdef.colors.secondary.clone(),
     };
+    if let Some(kit_pattern) = &tdef.kit_pattern {
+        team.kit_pattern = kit_pattern.clone();
+    }
+    team.media.logo = tdef.media.logo.clone();
     team.play_style = play_style_from_str(&tdef.play_style);
     team
 }

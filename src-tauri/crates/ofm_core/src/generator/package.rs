@@ -70,6 +70,15 @@ pub struct PlayerDef {
     pub overall: Option<u8>,
     #[serde(default)]
     pub attributes: Option<PlayerAttributes>,
+    #[serde(default)]
+    pub media: PlayerMediaDef,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayerMediaDef {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub face: Option<String>,
 }
 
 /// Package-level metadata (at most one per package).
@@ -624,7 +633,7 @@ colors:
         write(
             &dir,
             "teams.yaml",
-            "schema: team\nitems:\n  - { id: zed-fc, name: Zed FC, city: Zedtown, country: ZZ, colors: { primary: \"#000\", secondary: \"#fff\" } }\n  - { id: zed-utd, name: Zed United, city: Zedford, country: ZZ, colors: { primary: \"#111\", secondary: \"#fff\" } }\n",
+            "schema: team\nitems:\n  - { id: zed-fc, name: Zed FC, city: Zedtown, country: ZZ, colors: { primary: \"#000\", secondary: \"#fff\" }, media: { logo: \"assets/teams/zed-fc.png\" } }\n  - { id: zed-utd, name: Zed United, city: Zedford, country: ZZ, colors: { primary: \"#111\", secondary: \"#fff\" } }\n",
         );
         write(
             &dir,
@@ -713,7 +722,7 @@ colors:
         write(
             &dir,
             "teams.yaml",
-            "schema: team\nitems:\n  - { id: zed-fc, name: Zed FC, city: Zedtown, country: ZZ, colors: { primary: \"#000\", secondary: \"#fff\" } }\n  - { id: zed-utd, name: Zed United, city: Zedford, country: ZZ, colors: { primary: \"#111\", secondary: \"#fff\" } }\n",
+            "schema: team\nitems:\n  - { id: zed-fc, name: Zed FC, city: Zedtown, country: ZZ, colors: { primary: \"#000\", secondary: \"#fff\" }, media: { logo: \"assets/teams/zed-fc.png\" } }\n  - { id: zed-utd, name: Zed United, city: Zedford, country: ZZ, colors: { primary: \"#111\", secondary: \"#fff\" } }\n",
         );
         write(
             &dir,
@@ -728,6 +737,14 @@ colors:
         assert_eq!(world.name, "Zed World");
         let team_ids: Vec<&str> = world.teams.iter().map(|t| t.id.as_str()).collect();
         assert_eq!(team_ids, vec!["zed-fc", "zed-utd"], "stable authored ids are kept");
+        assert_eq!(
+            world
+                .teams
+                .iter()
+                .find(|team| team.id == "zed-fc")
+                .and_then(|team| team.media.logo.as_deref()),
+            Some("assets/teams/zed-fc.png")
+        );
         assert_eq!(world.players.len(), 44, "22 players per club are generated");
 
         let galaxy = world
@@ -764,7 +781,7 @@ colors:
         write(
             &dir,
             "star.yaml",
-            "schema: player\nid: zed-star\nname: Zed Star\nclub: zed-fc\nnationality: ZZ\nposition: Forward\noverall: 88\n",
+            "schema: player\nid: zed-star\nname: Zed Star\nclub: zed-fc\nnationality: ZZ\nposition: Forward\noverall: 88\nmedia:\n  face: assets/players/zed-star.png\n",
         );
 
         let (package, errors) = load_world_package(&dir);
@@ -779,6 +796,7 @@ colors:
             .expect("the authored player should be in the squad");
         assert_eq!(star.team_id.as_deref(), Some("zed-fc"));
         assert_eq!(star.full_name, "Zed Star");
+        assert_eq!(star.media.face.as_deref(), Some("assets/players/zed-star.png"));
         assert_eq!(star.position, domain::player::Position::Forward);
         assert!(
             star.ovr >= 72,

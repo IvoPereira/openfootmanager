@@ -307,8 +307,8 @@ may hold one entity, or many of the same type under an `items` array.
 | `world` | Package metadata (at most one) | `name`, `description`, `defaultActiveRegions`, `defaultActiveCompetitions`, `baseYear` |
 | `confederation` | A region/confederation | `id` (region id), `name` |
 | `country` | A country in a confederation | `id` (country code), `name`, `confederation` (a confederation id) |
-| `team` | A club | `id`, `name`, `city`, `country` (a country id), `colors`, optional `shortName`, `stadiumName`, `reputationRange`, `financeRange` |
-| `player` | A hand-authored player | `id`, `club` (a team id), `nationality` (a country id), `position`; ability as a single `overall` *or* an explicit `attributes` block |
+| `team` | A club | `id`, `name`, `city`, `country` (a country id), `colors`, optional `shortName`, `stadiumName`, `stadiumCapacity`, `kitPattern`, `reputationRange`, `financeRange`, `media.logo` |
+| `player` | A hand-authored player | `id`, `club` (a team id), `nationality` (a country id), `position`; ability as a single `overall` *or* an explicit `attributes` block; optional `media.face` |
 | `competition` | A competition (same shape as a Competition Definition, above) | `id`, `name`, `type`, `format`, `participants`, … |
 | `names` | Name pools (same shape as `default_names`) | per-nationality first/last name lists |
 
@@ -328,7 +328,8 @@ may hold one entity, or many of the same type under an `items` array.
 {
   "schema": "team",
   "id": "ts-gs", "name": "Galatasaray", "city": "Istanbul", "country": "TR",
-  "colors": { "primary": "#A90432", "secondary": "#FBB03B" }
+  "colors": { "primary": "#A90432", "secondary": "#FBB03B" },
+  "media": { "logo": "assets/teams/ts-gs.png" }
 }
 
 // star-player.yaml
@@ -339,6 +340,8 @@ club: ts-gs
 nationality: AR
 position: Striker
 overall: 84
+media:
+  face: assets/players/gs-icardi.png
 ```
 
 ### Importing a package
@@ -348,6 +351,16 @@ folder. The game validates the whole package up front — unknown confederations
 countries, or clubs, missing or duplicate ids, malformed files — and lists every
 problem at once. A package only becomes selectable once it is valid; nothing
 loads half-broken. If the package has no `world` name, the folder name is used.
+
+### Editing a package visually
+
+The **World Editor** in the main menu creates editable package drafts under the
+app data directory. It shows small completion badges for World, Leagues, Teams,
+Players, and Media, plus a Validation page with expandable issue groups. Drafts
+can import local logos and face photos; imported images are copied into the
+draft package's `assets/` folder and referenced through `media.logo` or
+`media.face`. Publishing a valid draft writes a playable manifest world database
+into the user `databases/` directory so it appears in the new-game world picker.
 
 ---
 

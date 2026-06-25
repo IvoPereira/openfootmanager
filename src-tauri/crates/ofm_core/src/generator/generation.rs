@@ -632,6 +632,7 @@ pub(super) fn generate_player_from_def(
     player.market_value = market_value;
     player.wage = wage;
     player.contract_end = Some(contract_end);
+    player.media.face = def.media.face.clone();
     player.condition = rng.random_range(75..100);
     player.morale = rng.random_range(40..76);
 

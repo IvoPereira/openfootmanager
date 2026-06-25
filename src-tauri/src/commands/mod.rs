@@ -18,6 +18,7 @@ pub mod time;
 pub mod transfers;
 pub mod util;
 pub mod world;
+pub mod world_editor;
 
 pub use club::*;
 pub use contracts::*;
@@ -37,3 +38,4 @@ pub use stats::*;
 pub use time::*;
 pub use transfers::*;
 pub use world::*;
+pub use world_editor::*;
